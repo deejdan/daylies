@@ -3,13 +3,14 @@
 `daylies` is a small TypeScript CLI for daily note-taking.
 
 Right now it supports:
+
 - opening or creating today's Markdown note
-- appending a bullet line to today's note
-- summarizing today's note or a note selected by date
 - using a project-root `config.json`
 - overriding the notes directory with `--here`
 
 Planned commands already scaffolded:
+
+- `summarize`
 - `organize`
 
 ## Requirements
@@ -39,11 +40,9 @@ daylies
 daylies open
 daylies today
 daylies add "captured thought"
-daylies summarize
-daylies summarize --date 2026-04-19
-daylies summarize --date 2026-04-19.md
 daylies --here
 daylies add --here "captured thought"
+daylies add --task "follow up on this"
 daylies open --here
 daylies help
 ```
@@ -70,41 +69,43 @@ Current supported fields:
 ```json
 {
   "notesDirectory": "./notes",
-  "editor": "vim",
-  "agent": "codex",
-  "summaryPrompt": "..."
+  "editor": "vim"
 }
 ```
 
 Behavior:
+
 - `notesDirectory` is resolved relative to `config.json`
 - `editor` is used when `$EDITOR` is not set
-- `agent` selects the CLI used by `summarize`
-- `summaryPrompt` overrides the built-in summary prompt
 - `$EDITOR` takes precedence over `config.json`
 - `--here` takes precedence over `notesDirectory`
 
 Current resolution order:
+
 - notes path: `--here` -> `config.json` -> default fallback
 - editor: `$EDITOR` -> `config.json` -> `vim`
-- summarize agent: `config.json` -> `codex`
-- summary prompt: `config.json` -> built-in prompt
 
 ## Available Commands
 
 `open`
+
 - Opens or creates today's note
 
 `today`
+
 - Alias for `open`
 
 `add`
+
 - Appends a bullet line to today's note
+- `--task` writes `- [ ] ...` instead of `- ...`
 
 `summarize`
-- Prints a summary for today's note or a note selected by `--date`
+
+- Placeholder for note summarization
 
 `organize`
+
 - Placeholder for note organization
 
 ## Development
