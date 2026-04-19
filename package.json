@@ -1,0 +1,21 @@
+{
+  "name": "daylies",
+  "version": "1.0.0",
+  "description": "CLI app for daily note taking",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "daylies": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3"
+  }
+}
