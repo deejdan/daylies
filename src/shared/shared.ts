@@ -4,6 +4,11 @@ import { homedir } from "node:os";
 import path from "node:path";
 import type { AppConfig } from "./config.js";
 
+const NEW_DAILY_FILE_TEMPLATE = `---
+# Raw Notes
+
+`;
+
 /** Builds the local-date filename for today's daily note. */
 export function getTodayFilename(): string {
   const now = new Date();
@@ -66,5 +71,5 @@ export async function dailyFileExists(filePath: string): Promise<boolean> {
 /** Creates the daily note file and its parent directory when missing. */
 export async function createDailyFile(filePath: string): Promise<void> {
   await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, "", "utf8");
+  await writeFile(filePath, NEW_DAILY_FILE_TEMPLATE, "utf8");
 }
