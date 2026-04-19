@@ -1,8 +1,8 @@
 import { spawn } from "node:child_process";
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
-import type { AppConfig } from "./config.js";
+import type { AgentName, AppConfig } from "./config.js";
 
 /** Builds the local-date filename for today's daily note. */
 export function getTodayFilename(): string {
@@ -14,9 +14,43 @@ export function getTodayFilename(): string {
   return `${year}-${month}-${day}.md`;
 }
 
+/** Normalizes a daily note date input into a `YYYY-MM-DD.md` filename. */
+export function getDailyFilenameFromDateInput(dateInput?: string): string {
+  if (!dateInput) {
+    return getTodayFilename();
+  }
+
+  const normalizedDate = dateInput.endsWith(".md") ? dateInput.slice(0, -3) : dateInput;
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
+    throw new Error(`Invalid --date value: ${dateInput}. Expected YYYY-MM-DD or YYYY-MM-DD.md`);
+  }
+
+  const parsedDate = new Date(`${normalizedDate}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    throw new Error(`Invalid --date value: ${dateInput}. Expected a real calendar date`);
+  }
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+
+  if (`${year}-${month}-${day}` !== normalizedDate) {
+    throw new Error(`Invalid --date value: ${dateInput}. Expected a real calendar date`);
+  }
+
+  return `${normalizedDate}.md`;
+}
+
 /** Resolves the editor command from the environment, config, or default fallback. */
 export function getEditor(config: AppConfig): string {
   return process.env.EDITOR || config.editor || "vim";
+}
+
+/** Resolves the configured coding agent, falling back to codex. */
+export function getAgent(config: AppConfig): AgentName {
+  return config.agent || "codex";
 }
 
 /** Launches the editor as an interactive child process attached to the current terminal. */
@@ -67,4 +101,69 @@ export async function dailyFileExists(filePath: string): Promise<boolean> {
 export async function createDailyFile(filePath: string): Promise<void> {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, "", "utf8");
+}
+
+/** Reads a note file and fails clearly when it does not exist. */
+export async function readNoteFile(filePath: string): Promise<string> {
+  try {
+    return await readFile(filePath, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw new Error(`Note not found: ${filePath}`);
+    }
+
+    throw error;
+  }
+}
+
+/** Runs the configured coding agent non-interactively and returns its stdout text. */
+export function runAgentPrompt(agent: AgentName, prompt: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const [command, ...args] =
+      agent === "claude" ? ["claude", "-p", "--output-format", "text"] : ["codex", "exec", "-"];
+    const child = spawn(command, args, {
+      stdio: ["pipe", "pipe", "pipe"]
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout.on("data", (chunk: Buffer | string) => {
+      stdout += chunk.toString();
+    });
+
+    child.stderr.on("data", (chunk: Buffer | string) => {
+      stderr += chunk.toString();
+    });
+
+    child.on("error", (error) => {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        reject(new Error(`Agent CLI not found: ${command}`));
+        return;
+      }
+
+      reject(error);
+    });
+
+    child.on("close", (exitCode) => {
+      if (exitCode !== 0) {
+        const errorOutput = stderr.trim();
+        const suffix = errorOutput ? `: ${errorOutput}` : "";
+
+        reject(new Error(`Agent command failed with code ${exitCode}${suffix}`));
+        return;
+      }
+
+      const result = stdout.trim();
+
+      if (!result) {
+        reject(new Error(`Agent returned empty output: ${command}`));
+        return;
+      }
+
+      resolve(result);
+    });
+
+    child.stdin.end(prompt);
+  });
 }
