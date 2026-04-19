@@ -37,6 +37,17 @@ For the working `add` command, the flow is:
 6. Create the note if it does not exist
 7. Append a `- ...` bullet line to the end of the note
 
+For the working `summarize` command, the flow is:
+
+1. Parse command-local args such as `--date`
+2. Load `config.json`
+3. Resolve the target note filename
+4. Resolve the full note path
+5. Read the note content
+6. Resolve the agent and prompt
+7. Run the agent CLI non-interactively
+8. Print the returned summary
+
 ## Current Folder Layout
 
 ```text
@@ -101,9 +112,10 @@ Holds reusable helpers that are not specific to one command.
 Current contents:
 - date filename generation
 - editor resolution and spawning
+- agent resolution and invocation
 - notes directory and note path helpers
+- note reading helpers
 - file existence and creation helpers
-- note appending helpers
 
 This is intentionally one file for now. It can be split later when the seams become obvious.
 
@@ -115,6 +127,7 @@ Current behavior:
 - reads root `config.json`
 - validates supported fields
 - resolves `notesDirectory` relative to that file
+- supports `agent` and `summaryPrompt`
 
 ## Command Model
 
@@ -163,6 +176,16 @@ Current editor precedence:
 2. `config.json` `editor`
 3. `vim`
 
+Current summarize-agent precedence:
+
+1. `config.json` `agent`
+2. `codex`
+
+Current summarize-prompt precedence:
+
+1. `config.json` `summaryPrompt`
+2. built-in summarize prompt
+
 ## Design Choices
 
 ### Thin registry
@@ -206,7 +229,7 @@ When to split later:
 Likely next steps:
 
 1. make a deliberate decision about project-root config vs user-level config
-2. implement `summarize`
-3. implement `organize`
-4. add tests for command dispatch, config loading, note creation, and note appending
+2. implement `organize`
+3. add tests for command dispatch, config loading, note creation, note appending, and summarize note selection
+4. decide whether summarize should support positional file paths later
 5. refine help output and per-command usage as needed

@@ -4,11 +4,12 @@
 
 Right now it supports:
 - opening or creating today's Markdown note
+- appending a bullet line to today's note
+- summarizing today's note or a note selected by date
 - using a project-root `config.json`
 - overriding the notes directory with `--here`
 
 Planned commands already scaffolded:
-- `summarize`
 - `organize`
 
 ## Requirements
@@ -38,6 +39,9 @@ daylies
 daylies open
 daylies today
 daylies add "captured thought"
+daylies summarize
+daylies summarize --date 2026-04-19
+daylies summarize --date 2026-04-19.md
 daylies --here
 daylies add --here "captured thought"
 daylies open --here
@@ -66,19 +70,25 @@ Current supported fields:
 ```json
 {
   "notesDirectory": "./notes",
-  "editor": "vim"
+  "editor": "vim",
+  "agent": "codex",
+  "summaryPrompt": "..."
 }
 ```
 
 Behavior:
 - `notesDirectory` is resolved relative to `config.json`
 - `editor` is used when `$EDITOR` is not set
+- `agent` selects the CLI used by `summarize`
+- `summaryPrompt` overrides the built-in summary prompt
 - `$EDITOR` takes precedence over `config.json`
 - `--here` takes precedence over `notesDirectory`
 
 Current resolution order:
 - notes path: `--here` -> `config.json` -> default fallback
 - editor: `$EDITOR` -> `config.json` -> `vim`
+- summarize agent: `config.json` -> `codex`
+- summary prompt: `config.json` -> built-in prompt
 
 ## Available Commands
 
@@ -92,7 +102,7 @@ Current resolution order:
 - Appends a bullet line to today's note
 
 `summarize`
-- Placeholder for note summarization
+- Prints a summary for today's note or a note selected by `--date`
 
 `organize`
 - Placeholder for note organization
