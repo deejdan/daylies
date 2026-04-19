@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { addCommand } from "./commands/add.js";
 import { organizeCommand } from "./commands/organize.js";
 import { openCommand } from "./commands/open.js";
 import { CommandRegistry } from "./commands/registry.js";
@@ -10,6 +11,7 @@ async function main(): Promise<void> {
 
   registry
     .register(openCommand)
+    .register(addCommand)
     .register(summarizeCommand)
     .register(organizeCommand);
 

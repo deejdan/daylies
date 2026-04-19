@@ -27,12 +27,23 @@ For the working `open` command, the flow is:
 7. Resolve the editor
 8. Spawn the editor process
 
+For the working `add` command, the flow is:
+
+1. Parse command-local args such as `--here`
+2. Load `config.json`
+3. Resolve the notes directory
+4. Build today's filename
+5. Build the full note path
+6. Create the note if it does not exist
+7. Append a `- ...` bullet line to the end of the note
+
 ## Current Folder Layout
 
 ```text
 daylies/
   src/
     commands/
+      add.ts
       open.ts
       organize.ts
       registry.ts
@@ -92,6 +103,7 @@ Current contents:
 - editor resolution and spawning
 - notes directory and note path helpers
 - file existence and creation helpers
+- note appending helpers
 
 This is intentionally one file for now. It can be split later when the seams become obvious.
 
@@ -196,5 +208,5 @@ Likely next steps:
 1. make a deliberate decision about project-root config vs user-level config
 2. implement `summarize`
 3. implement `organize`
-4. add tests for command dispatch, config loading, and note creation
+4. add tests for command dispatch, config loading, note creation, and note appending
 5. refine help output and per-command usage as needed

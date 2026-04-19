@@ -37,7 +37,9 @@ Useful variants:
 daylies
 daylies open
 daylies today
+daylies add "captured thought"
 daylies --here
+daylies add --here "captured thought"
 daylies open --here
 daylies help
 ```
@@ -85,6 +87,9 @@ Current resolution order:
 
 `today`
 - Alias for `open`
+
+`add`
+- Appends a bullet line to today's note
 
 `summarize`
 - Placeholder for note summarization
