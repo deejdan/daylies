@@ -38,6 +38,7 @@ daylies
 daylies open
 daylies today
 daylies add "captured thought"
+daylies add --task "follow up on this"
 daylies --here
 daylies add --here "captured thought"
 daylies open --here
@@ -90,6 +91,7 @@ Current resolution order:
 
 `add`
 - Appends a bullet line to today's note
+- `--task` writes `- [ ] ...` instead of `- ...`
 
 `summarize`
 - Placeholder for note summarization

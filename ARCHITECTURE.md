@@ -29,13 +29,13 @@ For the working `open` command, the flow is:
 
 For the working `add` command, the flow is:
 
-1. Parse command-local args such as `--here`
+1. Parse command-local args such as `--here` and `--task`
 2. Load `config.json`
 3. Resolve the notes directory
 4. Build today's filename
 5. Build the full note path
 6. Create the note if it does not exist
-7. Append a `- ...` bullet line to the end of the note
+7. Append either a `- ...` bullet line or `- [ ] ...` task line to the end of the note
 
 ## Current Folder Layout
 
