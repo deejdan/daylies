@@ -6,10 +6,10 @@ import {
   getDailyFilenameFromDateInput,
   getNotesDirectory,
   readNoteFile,
-  runAgentPrompt
+  runAgentPrompt,
 } from "../shared/shared.js";
 
-const DEFAULT_SUMMARY_PROMPT = `You are summarizing a daily note. The note may contain raw, unstructured thoughts.
+const SUMMARY_PROMPT = `You are summarizing a daily note. The note may contain raw, unstructured thoughts.
 
 Summarize the following daily note into a concise digest. Focus on:
 - What was accomplished or worked on
@@ -36,7 +36,9 @@ function parseSummarizeArgs(args: string[]): SummarizeOptions {
       const value = args[index + 1];
 
       if (!value) {
-        throw new Error("Usage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]");
+        throw new Error(
+          "Usage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]",
+        );
       }
 
       date = value;
@@ -44,7 +46,9 @@ function parseSummarizeArgs(args: string[]): SummarizeOptions {
       continue;
     }
 
-    throw new Error(`Unknown argument for summarize: ${arg}\n\nUsage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]`);
+    throw new Error(
+      `Unknown argument for summarize: ${arg}\n\nUsage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]`,
+    );
   }
 
   const options: SummarizeOptions = {};
@@ -56,14 +60,14 @@ function parseSummarizeArgs(args: string[]): SummarizeOptions {
   return options;
 }
 
-function buildSummaryPrompt(summaryPrompt: string, filename: string, noteContent: string): string {
+function buildSummaryPrompt(filename: string, noteContent: string): string {
   return [
-    summaryPrompt,
+    SUMMARY_PROMPT,
     "",
     `Daily note filename: ${filename}`,
     "",
     "Daily note content:",
-    noteContent
+    noteContent,
   ].join("\n");
 }
 
@@ -79,10 +83,9 @@ export const summarizeCommand: Command = {
     const filename = getDailyFilenameFromDateInput(options.date);
     const filePath = getDailyFilePath(notesDirectory, filename);
     const noteContent = await readNoteFile(filePath);
-    const summaryPrompt = config.summaryPrompt || DEFAULT_SUMMARY_PROMPT;
-    const finalPrompt = buildSummaryPrompt(summaryPrompt, filename, noteContent);
+    const finalPrompt = buildSummaryPrompt(filename, noteContent);
     const summary = await runAgentPrompt(agent, finalPrompt);
 
     console.log(summary);
-  }
+  },
 };
