@@ -5,12 +5,13 @@
 Right now it supports:
 
 - opening or creating today's Markdown note
+- appending notes or tasks to today's Markdown note
+- summarizing today's note or a note selected by date
 - using a project-root `config.json`
 - overriding the notes directory with `--here`
 
 Planned commands already scaffolded:
 
-- `summarize`
 - `organize`
 
 ## Requirements
@@ -44,6 +45,9 @@ daylies --here
 daylies add --here "captured thought"
 daylies add --task "follow up on this"
 daylies open --here
+daylies summarize
+daylies summarize --date yesterday
+daylies summarize --date 2026-04-20
 daylies help
 ```
 
@@ -107,6 +111,7 @@ Current resolution order:
 `summarize`
 
 - Summarizes today's note or a note selected by `--date`
+- Supports `--date yesterday`, `--date YYYY-MM-DD`, and `--date YYYY-MM-DD.md`
 
 `organize`
 

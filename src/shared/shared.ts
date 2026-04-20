@@ -9,26 +9,38 @@ const NEW_DAILY_FILE_TEMPLATE = `---
 
 `;
 
-/** Builds the local-date filename for today's daily note. */
-export function getTodayFilename(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+function formatDailyFilename(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}.md`;
 }
 
-/** Normalizes a daily note date input into a `YYYY-MM-DD.md` filename. */
+/** Builds the local-date filename for today's daily note. */
+export function getTodayFilename(): string {
+  return formatDailyFilename(new Date());
+}
+
+/** Normalizes a daily note date input into a daily note filename. */
 export function getDailyFilenameFromDateInput(dateInput?: string): string {
   if (!dateInput) {
     return getTodayFilename();
   }
 
+  if (dateInput === "yesterday") {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    return formatDailyFilename(yesterday);
+  }
+
   const normalizedDate = dateInput.endsWith(".md") ? dateInput.slice(0, -3) : dateInput;
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
-    throw new Error(`Invalid --date value: ${dateInput}. Expected YYYY-MM-DD or YYYY-MM-DD.md`);
+    throw new Error(
+      `Invalid --date value: ${dateInput}. Expected yesterday, YYYY-MM-DD, or YYYY-MM-DD.md`,
+    );
   }
 
   const parsedDate = new Date(`${normalizedDate}T00:00:00`);

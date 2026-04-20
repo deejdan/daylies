@@ -37,7 +37,7 @@ function parseSummarizeArgs(args: string[]): SummarizeOptions {
 
       if (!value) {
         throw new Error(
-          "Usage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]",
+          "Usage: daylies summarize [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]",
         );
       }
 
@@ -47,7 +47,7 @@ function parseSummarizeArgs(args: string[]): SummarizeOptions {
     }
 
     throw new Error(
-      `Unknown argument for summarize: ${arg}\n\nUsage: daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]`,
+      `Unknown argument for summarize: ${arg}\n\nUsage: daylies summarize [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]`,
     );
   }
 
@@ -74,7 +74,7 @@ function buildSummaryPrompt(filename: string, noteContent: string): string {
 export const summarizeCommand: Command = {
   name: "summarize",
   description: "Summarize today's note or a note selected by date",
-  usage: "daylies summarize [--date YYYY-MM-DD|YYYY-MM-DD.md]",
+  usage: "daylies summarize [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]",
   async run(args: string[]): Promise<void> {
     const options = parseSummarizeArgs(args);
     const config = await loadConfig();
