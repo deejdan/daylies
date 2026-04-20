@@ -2,9 +2,12 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+export type AgentName = "codex" | "claude";
+
 export type AppConfig = {
   notesDirectory?: string;
   editor?: string;
+  agent?: AgentName;
 };
 
 /** Returns the path to the user config file for daylies. */
@@ -47,21 +50,40 @@ function validateConfig(value: unknown, configPath: string): AppConfig {
   const config = value as Record<string, unknown>;
 
   if ("notesDirectory" in config && typeof config.notesDirectory !== "string") {
-    throw new Error(`Config field "notesDirectory" must be a string: ${configPath}`);
+    throw new Error(
+      `Config field "notesDirectory" must be a string: ${configPath}`,
+    );
   }
 
   if ("editor" in config && typeof config.editor !== "string") {
     throw new Error(`Config field "editor" must be a string: ${configPath}`);
   }
 
+  if (
+    "agent" in config &&
+    config.agent !== "codex" &&
+    config.agent !== "claude"
+  ) {
+    throw new Error(
+      `Config field "agent" must be "codex" or "claude": ${configPath}`,
+    );
+  }
+
   const validatedConfig: AppConfig = {};
 
   if (typeof config.notesDirectory === "string") {
-    validatedConfig.notesDirectory = path.resolve(path.dirname(configPath), config.notesDirectory);
+    validatedConfig.notesDirectory = path.resolve(
+      path.dirname(configPath),
+      config.notesDirectory,
+    );
   }
 
   if (typeof config.editor === "string") {
     validatedConfig.editor = config.editor;
+  }
+
+  if (config.agent === "codex" || config.agent === "claude") {
+    validatedConfig.agent = config.agent;
   }
 
   return validatedConfig;

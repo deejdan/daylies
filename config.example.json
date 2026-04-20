@@ -1,4 +1,5 @@
 {
-  "notesDirectory": "/path/to/notes/",
-  "editor": "vim"
+  "notesDirectory": "./notes",
+  "editor": "vim",
+  "agent": "claude"
 }
