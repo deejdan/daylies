@@ -44,7 +44,7 @@ For the working `summarize` command, the flow is:
 3. Resolve the target note filename
 4. Resolve the full note path
 5. Read the note content
-6. Resolve the agent and prompt
+6. Resolve the agent and use the built-in summarize prompt
 7. Run the agent CLI non-interactively
 8. Print the returned summary
 
@@ -127,7 +127,7 @@ Current behavior:
 - reads root `config.json`
 - validates supported fields
 - resolves `notesDirectory` relative to that file
-- supports `agent` and `summaryPrompt`
+- supports `agent`
 
 ## Command Model
 
@@ -181,10 +181,9 @@ Current summarize-agent precedence:
 1. `config.json` `agent`
 2. `codex`
 
-Current summarize-prompt precedence:
+Current summarize prompt:
 
-1. `config.json` `summaryPrompt`
-2. built-in summarize prompt
+1. built-in summarize prompt
 
 ## Design Choices
 

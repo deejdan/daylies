@@ -69,7 +69,8 @@ Current supported fields:
 ```json
 {
   "notesDirectory": "./notes",
-  "editor": "vim"
+  "editor": "vim",
+  "agent": "claude"
 }
 ```
 
@@ -77,13 +78,16 @@ Behavior:
 
 - `notesDirectory` is resolved relative to `config.json`
 - `editor` is used when `$EDITOR` is not set
+- `agent` selects the summarize CLI (`codex` or `claude`)
 - `$EDITOR` takes precedence over `config.json`
 - `--here` takes precedence over `notesDirectory`
+- summarize always uses the built-in prompt in code
 
 Current resolution order:
 
 - notes path: `--here` -> `config.json` -> default fallback
 - editor: `$EDITOR` -> `config.json` -> `vim`
+- summarize agent: `config.json` -> `codex`
 
 ## Available Commands
 
@@ -102,7 +106,7 @@ Current resolution order:
 
 `summarize`
 
-- Placeholder for note summarization
+- Summarizes today's note or a note selected by `--date`
 
 `organize`
 
