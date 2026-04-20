@@ -5,6 +5,7 @@
 Right now it supports:
 
 - opening or creating today's Markdown note
+- opening or creating a specific note by date
 - appending notes or tasks to today's Markdown note
 - summarizing today's note or a note selected by date
 - using a project-root `config.json`
@@ -46,6 +47,8 @@ Useful variants:
 daylies
 daylies open
 daylies today
+daylies open --date yesterday
+daylies open --date 2026-04-20
 daylies add "captured thought"
 daylies --here
 daylies add --here "captured thought"
@@ -105,6 +108,7 @@ Current resolution order:
 `open`
 
 - Opens or creates today's note
+- Supports `--date yesterday`, `--date YYYY-MM-DD`, and `--date YYYY-MM-DD.md`
 
 `today`
 

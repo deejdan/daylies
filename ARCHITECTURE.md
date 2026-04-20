@@ -18,10 +18,10 @@ The current runtime path for `daylies` is:
 
 For the working `open` command, the flow is:
 
-1. Parse command-local args such as `--here`
+1. Parse command-local args such as `--here` and `--date`
 2. Load `config.json`
 3. Resolve the notes directory
-4. Build today's filename
+4. Resolve the target note filename
 5. Build the full note path
 6. Create the note if it does not exist
 7. Resolve the editor

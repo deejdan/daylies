@@ -5,37 +5,61 @@ import {
   dailyFileExists,
   getEditor,
   getDailyFilePath,
+  getDailyFilenameFromDateInput,
   getNotesDirectory,
-  getTodayFilename,
   openEditor,
 } from "../shared/shared.js";
 
 type OpenOptions = {
+  date?: string;
   useCurrentDirectory: boolean;
 };
 
 function parseOpenArgs(args: string[]): OpenOptions {
+  let date: string | undefined;
   let useCurrentDirectory = false;
 
-  for (const arg of args) {
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+
     if (arg === "--here") {
       useCurrentDirectory = true;
       continue;
     }
 
+    if (arg === "--date") {
+      const value = args[index + 1];
+
+      if (!value) {
+        throw new Error(
+          "Usage: daylies [open] [--here] [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]",
+        );
+      }
+
+      date = value;
+      index += 1;
+      continue;
+    }
+
     throw new Error(
-      `Unknown argument for open: ${arg}\n\nUsage: daylies [open] [--here]`,
+      `Unknown argument for open: ${arg}\n\nUsage: daylies [open] [--here] [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]`,
     );
   }
 
-  return { useCurrentDirectory };
+  const options: OpenOptions = { useCurrentDirectory };
+
+  if (date) {
+    options.date = date;
+  }
+
+  return options;
 }
 
 export const openCommand: Command = {
   name: "open",
   aliases: ["today"],
-  description: "Open or create today's note",
-  usage: "daylies [open] [--here]",
+  description: "Open or create today's note or a note selected by date",
+  usage: "daylies [open] [--here] [--date yesterday|YYYY-MM-DD|YYYY-MM-DD.md]",
   async run(args: string[]): Promise<void> {
     const options = parseOpenArgs(args);
     const config = await loadConfig();
@@ -43,7 +67,7 @@ export const openCommand: Command = {
       options.useCurrentDirectory,
       config,
     );
-    const filename = getTodayFilename();
+    const filename = getDailyFilenameFromDateInput(options.date);
     const filePath = getDailyFilePath(notesDirectory, filename);
 
     if (!(await dailyFileExists(filePath))) {
