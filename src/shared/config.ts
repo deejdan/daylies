@@ -8,7 +8,6 @@ export type AppConfig = {
   notesDirectory?: string;
   editor?: string;
   agent?: AgentName;
-  summaryPrompt?: string;
 };
 
 /** Returns the path to the user config file for daylies. */
@@ -51,25 +50,32 @@ function validateConfig(value: unknown, configPath: string): AppConfig {
   const config = value as Record<string, unknown>;
 
   if ("notesDirectory" in config && typeof config.notesDirectory !== "string") {
-    throw new Error(`Config field "notesDirectory" must be a string: ${configPath}`);
+    throw new Error(
+      `Config field "notesDirectory" must be a string: ${configPath}`,
+    );
   }
 
   if ("editor" in config && typeof config.editor !== "string") {
     throw new Error(`Config field "editor" must be a string: ${configPath}`);
   }
 
-  if ("agent" in config && config.agent !== "codex" && config.agent !== "claude") {
-    throw new Error(`Config field "agent" must be "codex" or "claude": ${configPath}`);
-  }
-
-  if ("summaryPrompt" in config && typeof config.summaryPrompt !== "string") {
-    throw new Error(`Config field "summaryPrompt" must be a string: ${configPath}`);
+  if (
+    "agent" in config &&
+    config.agent !== "codex" &&
+    config.agent !== "claude"
+  ) {
+    throw new Error(
+      `Config field "agent" must be "codex" or "claude": ${configPath}`,
+    );
   }
 
   const validatedConfig: AppConfig = {};
 
   if (typeof config.notesDirectory === "string") {
-    validatedConfig.notesDirectory = path.resolve(path.dirname(configPath), config.notesDirectory);
+    validatedConfig.notesDirectory = path.resolve(
+      path.dirname(configPath),
+      config.notesDirectory,
+    );
   }
 
   if (typeof config.editor === "string") {
@@ -78,10 +84,6 @@ function validateConfig(value: unknown, configPath: string): AppConfig {
 
   if (config.agent === "codex" || config.agent === "claude") {
     validatedConfig.agent = config.agent;
-  }
-
-  if (typeof config.summaryPrompt === "string") {
-    validatedConfig.summaryPrompt = config.summaryPrompt;
   }
 
   return validatedConfig;
