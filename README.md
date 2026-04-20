@@ -21,7 +21,13 @@ Planned commands already scaffolded:
 
 ## Install And Run
 
-First build and link the CLI:
+First create a root `config.json` from the example:
+
+```sh
+cp config.example.json config.json
+```
+
+Then build and link the CLI:
 
 ```sh
 npm run build
@@ -67,6 +73,7 @@ That will create or open today's note inside `~/Desktop/test-notes`.
 ## Config
 
 The CLI reads configuration from the root `config.json`.
+Create it from `config.example.json` before running the CLI.
 
 Current supported fields:
 
