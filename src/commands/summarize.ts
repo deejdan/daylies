@@ -7,6 +7,7 @@ import {
   getNotesDirectory,
   readNoteFile,
   runAgentPrompt,
+  withSpinner,
 } from "../shared/shared.js";
 
 const SUMMARY_PROMPT = `You are summarizing a daily note. The note may contain raw, unstructured thoughts.
@@ -83,7 +84,9 @@ export const summarizeCommand: Command = {
     const filePath = getDailyFilePath(notesDirectory, filename);
     const noteContent = await readNoteFile(filePath);
     const finalPrompt = buildSummaryPrompt(filename, noteContent);
-    const summary = await runAgentPrompt(agent, finalPrompt);
+    const summary = await withSpinner("Summarizing...", () =>
+      runAgentPrompt(agent, finalPrompt),
+    );
 
     console.log(summary);
   },
