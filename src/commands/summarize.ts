@@ -17,7 +17,6 @@ Summarize the following daily note into a concise digest. Focus on:
 - Decisions made
 - Anything that seems important or recurring
 
-Keep it brief — 3 to 5 sentences max.
 Write in past tense, third person is fine.
 Do not invent or infer content that isn't there.
 If the note is sparse, just summarize what's there without padding.`;
