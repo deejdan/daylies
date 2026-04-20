@@ -121,6 +121,35 @@ export async function readNoteFile(filePath: string): Promise<string> {
   }
 }
 
+export async function withSpinner<T>(
+  message: string,
+  operation: () => Promise<T>,
+): Promise<T> {
+  if (!process.stderr.isTTY) {
+    return operation();
+  }
+
+  const frames = ["|", "/", "-", "\\"];
+  let frameIndex = 0;
+
+  const render = (): void => {
+    const frame = frames[frameIndex % frames.length];
+    process.stderr.write(`\r${message} ${frame}`);
+    frameIndex += 1;
+  };
+
+  render();
+
+  const timer = setInterval(render, 100);
+
+  try {
+    return await operation();
+  } finally {
+    clearInterval(timer);
+    process.stderr.write("\r\x1b[2K");
+  }
+}
+
 /** Runs the configured coding agent non-interactively and returns its stdout text. */
 export function runAgentPrompt(agent: AgentName, prompt: string): Promise<string> {
   return new Promise((resolve, reject) => {
